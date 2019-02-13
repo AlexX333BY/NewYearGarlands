@@ -9,9 +9,9 @@ namespace NewYearGarlands
 
 	ClientGarlandPipe::~ClientGarlandPipe()
 	{
-		if (m_hPipe != INVALID_HANDLE_VALUE)
+		if (IsConnected())
 		{
-			CloseHandle(m_hPipe);
+			DisconnectFromServer();
 		}
 	}
 

@@ -6,7 +6,7 @@ namespace NewYearGarlands
 {
 	class GarlandPipe
 	{
-	protected:
+	public:
 		static LPCSTR GetPipeName();
 	};
 }

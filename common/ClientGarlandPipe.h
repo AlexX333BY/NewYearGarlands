@@ -3,7 +3,7 @@
 
 namespace NewYearGarlands
 {
-	class ClientGarlandPipe : GarlandPipe
+	class ClientGarlandPipe : public GarlandPipe
 	{
 	public:
 		ClientGarlandPipe();
@@ -13,7 +13,7 @@ namespace NewYearGarlands
 		BOOL DisconnectFromServer();
 		BOOL ReadGarlandMessage(GarlandMessage* pgmMessage);
 		BOOL IsConnected();
-	private:
+	protected:
 		HANDLE m_hPipe;
 	};
 }
