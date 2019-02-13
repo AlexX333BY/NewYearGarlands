@@ -21,9 +21,21 @@
     <ClCompile Include="GarlandService.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GarlandServer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GarlandServerThreadArgument.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GarlandService.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GarlandServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GarlandServerThreadArgument.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

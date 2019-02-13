@@ -38,9 +38,22 @@ namespace NewYearGarlands
 		}
 	}
 
-	VOID InitializeService(DWORD dwArgc, LPTSTR *lpszArgv)
+	VOID WINAPI ServiceMain(DWORD dwArgc, LPTSTR *lpszArgv)
 	{
+		ghServiceStatusHandle = RegisterServiceCtrlHandler(lpcsServiceName, ServiceCtrlHandler);
+
+		if (ghServiceStatusHandle == 0)
+		{
+			return;
+		}
+
+		gssServiceStatus.dwServiceType = SERVICE_WIN32_OWN_PROCESS;
+
+		ReportServiceStatus(SERVICE_START_PENDING, NO_ERROR, 0, 0);
+
 		ghStopEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+
+		ReportServiceStatus(SERVICE_START_PENDING, NO_ERROR, 0, 1);
 
 		if (ghStopEvent == NULL)
 		{
@@ -53,23 +66,6 @@ namespace NewYearGarlands
 		WaitForSingleObject(ghStopEvent, INFINITE);
 
 		ReportServiceStatus(SERVICE_STOPPED, NO_ERROR, 0, 0);
-	}
-
-	VOID WINAPI ServiceMain(DWORD dwArgc, LPTSTR *lpszArgv)
-	{
-		ghServiceStatusHandle = RegisterServiceCtrlHandler(lpcsServiceName, ServiceCtrlHandler);
-
-		if (ghServiceStatusHandle == 0)
-		{
-			return;
-		}
-
-		gssServiceStatus.dwServiceType = SERVICE_WIN32_OWN_PROCESS;
-		gssServiceStatus.dwCurrentState = SERVICE_START_PENDING;
-
-		ReportServiceStatus(SERVICE_START_PENDING, NO_ERROR, 3000, 0);
-
-		InitializeService(dwArgc, lpszArgv);
 	}
 
 	BOOL StartGarlandService()

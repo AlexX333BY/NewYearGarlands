@@ -115,11 +115,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GarlandServer.cpp" />
+    <ClCompile Include="GarlandServerThreadArgument.cpp" />
     <ClCompile Include="GarlandService.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GarlandServer.h" />
     <ClInclude Include="GarlandService.h" />
+    <ClInclude Include="GarlandServerThreadArgument.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\common\common.vcxproj">
+      <Project>{3b28742d-3da6-4ee3-8814-fd2001865abd}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
