@@ -24,7 +24,7 @@ BOOL InstallService()
 
 	hService = CreateService(hSCManager, NewYearGarlands::lpcsServiceName, NewYearGarlands::lpcsServiceDescription, SERVICE_ALL_ACCESS,
 		SERVICE_WIN32_OWN_PROCESS, SERVICE_DEMAND_START, SERVICE_ERROR_NORMAL,
-		lptsPath, NULL, NULL, NULL, "NT AUTHORITY\NetworkService", NULL);
+		lptsPath, NULL, NULL, NULL, "NT AUTHORITY\\NetworkService", NULL);
 
 	if (hService == NULL)
 	{
