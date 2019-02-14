@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\common\ClientGarlandPipe.h"
+#include "GarlandMessageEvent.h"
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
 	#include <wx/wx.h>
@@ -11,10 +11,11 @@ namespace NewYearGarlands
 	class GarlandLampFrame : public wxFrame
 	{
 	public:
-		GarlandLampFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
+		GarlandLampFrame(const wxString& title);
 	protected:
-		void OnExit(wxCommandEvent& event);
-		wxDECLARE_EVENT_TABLE();
-		ClientGarlandPipe m_cgpPipe;
+		void OnClose(wxCloseEvent& event);
+		void OnLightUp(GarlandMessageEvent& event);
+		void OnLightOut(GarlandMessageEvent& event);
+		HANDLE m_hPipeListeningThread;
 	};
 }

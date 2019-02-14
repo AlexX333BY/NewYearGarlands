@@ -6,7 +6,6 @@ namespace NewYearGarlands
 {
 	enum GarlandMessageType
 	{
-		CLOSE_CONNECTION,
 		LIGHT_UP,
 		LIGHT_OUT
 	};
