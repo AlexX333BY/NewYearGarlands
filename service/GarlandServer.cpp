@@ -1,4 +1,5 @@
 #include "GarlandServer.h"
+#include "MessageGeneratorProvider.h"
 #include "..\common\ServerGarlandPipe.h"
 
 namespace NewYearGarlands
@@ -44,6 +45,7 @@ namespace NewYearGarlands
 			{
 				sgpPipe = new ServerGarlandPipe();
 			}
+
 			if (sgpPipe->Connect())
 			{
 				EnterCriticalSection(&pgstaArgument->m_csReadWriteCriticalSection);
@@ -58,6 +60,7 @@ namespace NewYearGarlands
 			}
 		}
 
+		SetEvent(pgstaArgument->m_hNonZeroCountEvent);
 		if (sgpPipe != NULL)
 		{
 			delete sgpPipe;
@@ -66,45 +69,29 @@ namespace NewYearGarlands
 
 	DWORD WINAPI LightingThreadProc(GarlandServerThreadArgument *pgstaArgument)
 	{
-		BYTE bGeneratorsCount = 2, bCurrentGenerator = 0;
-		// TODO: add array of function-generators
+		MessageGeneratorProvider mgpProvider;
+		GarlandMessage gmMessage;
 
 		while (pgstaArgument->m_bShouldRun)
 		{
-			if (pgstaArgument->m_vClientPipes.empty())
-			{
-				WaitForSingleObject(pgstaArgument->m_hNonZeroCountEvent);
-			}
-
-			// TODO: get function generator
+			gmMessage = mgpProvider.GetNext()();
 			for (std::vector<ServerGarlandPipe *>::iterator it = pgstaArgument->m_vClientPipes.begin(); 
 				it != pgstaArgument->m_vClientPipes.end(); ++it)
 			{
-				if (!(*it)->SendGarlandMessage(/* TODO: use generator to generate message */))
+				if (!(*it)->SendGarlandMessage(&gmMessage))
 				{
+					delete *it;
 					EnterCriticalSection(&pgstaArgument->m_csReadWriteCriticalSection);
 					pgstaArgument->m_vClientPipes.erase(it);
 					LeaveCriticalSection(&pgstaArgument->m_csReadWriteCriticalSection);
 				}
 			}
+
+			if (pgstaArgument->m_vClientPipes.empty())
+			{
+				WaitForSingleObject(pgstaArgument->m_hNonZeroCountEvent, INFINITE);
+				mgpProvider.Reset();
+			}
 		}
-	}
-
-	const BYTE bColorCount = 3;
-	const COLORREF crColors[bColorCount] = { RGB(255, 0, 0), RGB(0, 255, 0), RGB(0, 0, 255) };
-
-	GarlandMessage GenerateLightUpMessage()
-	{
-		GarlandMessage gmMessage;
-		gmMessage.crColor = crColors[rand() % bColorCount];
-		gmMessage.mtMessageType = LIGHT_UP;
-		return gmMessage;
-	}
-
-	GarlandMessage GenerateLightOutMessage()
-	{
-		GarlandMessage gmMessage;
-		gmMessage.mtMessageType = LIGHT_OUT;
-		return gmMessage;
 	}
 }
