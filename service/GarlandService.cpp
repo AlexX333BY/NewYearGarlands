@@ -3,41 +3,47 @@
 
 namespace NewYearGarlands
 {
-	SERVICE_STATUS_HANDLE ghServiceStatusHandle;
-	SERVICE_STATUS gssServiceStatus;
-	HANDLE ghStopEvent;
+	SERVICE_STATUS_HANDLE g_hServiceStatusHandle;
+	SERVICE_STATUS g_ssServiceStatus;
+	HANDLE g_hStopEvent;
+	GarlandServer *g_gsServer = new GarlandServer();
 
-	VOID ReportServiceStatus(DWORD dwCurrentState, DWORD dwWin32ExitCode, DWORD dwWaitHint, DWORD dwCheckpoint)
+	const DWORD dwEventCreationError = 1;
+	const DWORD dwServerStartupError = 2;
+
+	VOID ReportServiceStatus(DWORD dwCurrentState, DWORD dwWaitHint = 0, DWORD dwCheckpoint = 0, 
+		DWORD dwWin32ExitCode = NO_ERROR, DWORD dwServiceSpecificExitCode = 0)
 	{
-		gssServiceStatus.dwCurrentState = dwCurrentState;
-		gssServiceStatus.dwWin32ExitCode = dwWin32ExitCode;
-		gssServiceStatus.dwWaitHint = dwWaitHint;
+		g_ssServiceStatus.dwCurrentState = dwCurrentState;
+		g_ssServiceStatus.dwWin32ExitCode = dwWin32ExitCode;
+		g_ssServiceStatus.dwServiceSpecificExitCode = dwServiceSpecificExitCode;
+		g_ssServiceStatus.dwWaitHint = dwWaitHint;
+		g_ssServiceStatus.dwCheckPoint = dwCheckpoint;
 
 		if (dwCurrentState == SERVICE_START_PENDING)
 		{
-			gssServiceStatus.dwControlsAccepted = 0;
+			g_ssServiceStatus.dwControlsAccepted = 0;
 		}
 		else
 		{
-			gssServiceStatus.dwControlsAccepted = SERVICE_ACCEPT_SHUTDOWN | SERVICE_ACCEPT_STOP;
+			g_ssServiceStatus.dwControlsAccepted = SERVICE_ACCEPT_SHUTDOWN | SERVICE_ACCEPT_STOP;
 		}
 
-		SetServiceStatus(ghServiceStatusHandle, &gssServiceStatus);
+		SetServiceStatus(g_hServiceStatusHandle, &g_ssServiceStatus);
 	}
 
 	VOID WINAPI ServiceCtrlHandler(DWORD dwCtrl)
 	{
-		static GarlandServer *gsServer = new GarlandServer();
-
 		switch (dwCtrl)
 		{
 		case SERVICE_CONTROL_SHUTDOWN:
 		case SERVICE_CONTROL_STOP:
-			ReportServiceStatus(SERVICE_STOP_PENDING, NO_ERROR, 0, 0);
-			gsServer->Shutdown();
-			ReportServiceStatus(SERVICE_STOP_PENDING, NO_ERROR, 0, 1);
-			delete gsServer;
-			SetEvent(ghStopEvent);
+			ReportServiceStatus(SERVICE_STOP_PENDING, 0, 0);
+			g_gsServer->Shutdown();
+			ReportServiceStatus(SERVICE_STOP_PENDING, 0, 1);
+			delete g_gsServer;
+			ReportServiceStatus(SERVICE_STOP_PENDING, 0, 2);
+			SetEvent(g_hStopEvent);
 			return;
 		default:
 			break;
@@ -46,32 +52,38 @@ namespace NewYearGarlands
 
 	VOID WINAPI ServiceMain(DWORD dwArgc, LPTSTR *lpszArgv)
 	{
-		ghServiceStatusHandle = RegisterServiceCtrlHandler(lpcsServiceName, ServiceCtrlHandler);
+		g_hServiceStatusHandle = RegisterServiceCtrlHandler(lpcsServiceName, ServiceCtrlHandler);
 
-		if (ghServiceStatusHandle == 0)
+		if (g_hServiceStatusHandle == 0)
 		{
 			return;
 		}
 
-		gssServiceStatus.dwServiceType = SERVICE_WIN32_OWN_PROCESS;
+		g_ssServiceStatus.dwServiceType = SERVICE_WIN32_OWN_PROCESS;
+		ReportServiceStatus(SERVICE_START_PENDING, 0, 0);
 
-		ReportServiceStatus(SERVICE_START_PENDING, NO_ERROR, 0, 0);
+		g_hStopEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+		ReportServiceStatus(SERVICE_START_PENDING, 0, 1);
 
-		ghStopEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-
-		ReportServiceStatus(SERVICE_START_PENDING, NO_ERROR, 0, 1);
-
-		if (ghStopEvent == NULL)
+		if (g_hStopEvent == NULL)
 		{
-			ReportServiceStatus(SERVICE_STOPPED, NO_ERROR, 0, 0);
+			ReportServiceStatus(SERVICE_STOPPED, 0, 0, ERROR_SERVICE_SPECIFIC_ERROR, dwEventCreationError);
 			return;
 		}
 
-		ReportServiceStatus(SERVICE_RUNNING, NO_ERROR, 0, 0);
+		g_gsServer = new GarlandServer();
+		ReportServiceStatus(SERVICE_START_PENDING, 0, 2);
 
-		WaitForSingleObject(ghStopEvent, INFINITE);
+		if (!g_gsServer->Start())
+		{
+			ReportServiceStatus(SERVICE_STOPPED, 0, 0, ERROR_SERVICE_SPECIFIC_ERROR, dwServerStartupError);
+			return;
+		}
+		ReportServiceStatus(SERVICE_RUNNING);
 
-		ReportServiceStatus(SERVICE_STOPPED, NO_ERROR, 0, 0);
+		WaitForSingleObject(g_hStopEvent, INFINITE);
+
+		ReportServiceStatus(SERVICE_STOPPED);
 	}
 
 	BOOL StartGarlandService()
@@ -79,12 +91,12 @@ namespace NewYearGarlands
 		int iServiceNameLength = lstrlen(lpcsServiceName);
 		TCHAR *szServiceName = (TCHAR *)calloc(iServiceNameLength + 1, sizeof(TCHAR));
 
-		SERVICE_TABLE_ENTRY DispatchTable[] =
+		SERVICE_TABLE_ENTRY aServiceStartTable[] =
 		{
 			{ szServiceName, ServiceMain },
 			{ NULL, NULL }
 		};
 
-		return StartServiceCtrlDispatcher(DispatchTable);
+		return StartServiceCtrlDispatcher(aServiceStartTable);
 	}
 }
