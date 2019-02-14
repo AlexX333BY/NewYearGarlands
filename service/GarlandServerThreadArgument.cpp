@@ -3,7 +3,7 @@
 namespace NewYearGarlands
 {
 	GarlandServerThreadArgument::GarlandServerThreadArgument()
-		: m_bShouldRun(TRUE)
+		: m_bShouldRun(TRUE), m_dwLightSleepTime(1000)
 	{
 		InitializeCriticalSection(&m_csReadWriteCriticalSection);
 		m_hNonZeroCountEvent = CreateEvent(NULL, FALSE, FALSE, NULL);

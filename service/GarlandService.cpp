@@ -1,4 +1,5 @@
 #include "GarlandService.h"
+#include "GarlandServer.h"
 
 namespace NewYearGarlands
 {
@@ -26,12 +27,17 @@ namespace NewYearGarlands
 
 	VOID WINAPI ServiceCtrlHandler(DWORD dwCtrl)
 	{
+		static GarlandServer *gsServer = new GarlandServer();
+
 		switch (dwCtrl)
 		{
+		case SERVICE_CONTROL_SHUTDOWN:
 		case SERVICE_CONTROL_STOP:
 			ReportServiceStatus(SERVICE_STOP_PENDING, NO_ERROR, 0, 0);
+			gsServer->Shutdown();
+			ReportServiceStatus(SERVICE_STOP_PENDING, NO_ERROR, 0, 1);
+			delete gsServer;
 			SetEvent(ghStopEvent);
-
 			return;
 		default:
 			break;

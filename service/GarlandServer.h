@@ -10,6 +10,7 @@ namespace NewYearGarlands
 	{
 	public:
 		GarlandServer();
+		GarlandServer(DWORD dwPause);
 		~GarlandServer();
 		BOOL Start();
 		BOOL Shutdown();
@@ -18,7 +19,6 @@ namespace NewYearGarlands
 		volatile BOOL m_bIsRunning;
 		HANDLE m_hClientListeningThread;
 		HANDLE m_hLightingThread;
-		CRITICAL_SECTION m_csCriticalSection;
-		GarlandServerThreadArgument m_tpaArgument;
+		GarlandServerThreadArgument m_gstaArgument;
 	};
 }

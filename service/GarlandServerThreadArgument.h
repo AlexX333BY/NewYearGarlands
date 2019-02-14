@@ -15,5 +15,6 @@ namespace NewYearGarlands
 		std::vector<ServerGarlandPipe *> m_vClientPipes;
 		HANDLE m_hNonZeroCountEvent;
 		CRITICAL_SECTION m_csReadWriteCriticalSection;
+		DWORD m_dwLightSleepTime;
 	};
 }

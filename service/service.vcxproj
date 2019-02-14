@@ -119,11 +119,13 @@
     <ClCompile Include="GarlandServerThreadArgument.cpp" />
     <ClCompile Include="GarlandService.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MessageGeneratorProvider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GarlandServer.h" />
     <ClInclude Include="GarlandService.h" />
     <ClInclude Include="GarlandServerThreadArgument.h" />
+    <ClInclude Include="MessageGeneratorProvider.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\common\common.vcxproj">
