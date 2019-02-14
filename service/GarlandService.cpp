@@ -10,8 +10,9 @@ namespace NewYearGarlands
 
 	const DWORD dwEventCreationError = 1;
 	const DWORD dwServerStartupError = 2;
+	const DWORD dwDefaultWaitHint = 1000;
 
-	VOID ReportServiceStatus(DWORD dwCurrentState, DWORD dwWaitHint = 0, DWORD dwCheckpoint = 0, 
+	VOID ReportServiceStatus(DWORD dwCurrentState, DWORD dwCheckpoint = 0, DWORD dwWaitHint = dwDefaultWaitHint,
 		DWORD dwWin32ExitCode = NO_ERROR, DWORD dwServiceSpecificExitCode = 0)
 	{
 		g_ssServiceStatus.dwCurrentState = dwCurrentState;
@@ -38,11 +39,11 @@ namespace NewYearGarlands
 		{
 		case SERVICE_CONTROL_SHUTDOWN:
 		case SERVICE_CONTROL_STOP:
-			ReportServiceStatus(SERVICE_STOP_PENDING, 0, 0);
+			ReportServiceStatus(SERVICE_STOP_PENDING, 0, 5 * dwDefaultWaitHint);
 			g_gsServer->Shutdown();
-			ReportServiceStatus(SERVICE_STOP_PENDING, 0, 1);
+			ReportServiceStatus(SERVICE_STOP_PENDING, 1);
 			delete g_gsServer;
-			ReportServiceStatus(SERVICE_STOP_PENDING, 0, 2);
+			ReportServiceStatus(SERVICE_STOP_PENDING, 2);
 			SetEvent(g_hStopEvent);
 			return;
 		default:
@@ -60,10 +61,10 @@ namespace NewYearGarlands
 		}
 
 		g_ssServiceStatus.dwServiceType = SERVICE_WIN32_OWN_PROCESS;
-		ReportServiceStatus(SERVICE_START_PENDING, 0, 0);
+		ReportServiceStatus(SERVICE_START_PENDING, 0);
 
 		g_hStopEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-		ReportServiceStatus(SERVICE_START_PENDING, 0, 1);
+		ReportServiceStatus(SERVICE_START_PENDING, 1);
 
 		if (g_hStopEvent == NULL)
 		{
@@ -72,7 +73,7 @@ namespace NewYearGarlands
 		}
 
 		g_gsServer = new GarlandServer();
-		ReportServiceStatus(SERVICE_START_PENDING, 0, 2);
+		ReportServiceStatus(SERVICE_START_PENDING, 2);
 
 		if (!g_gsServer->Start())
 		{
