@@ -24,6 +24,9 @@
     <ClInclude Include="GarlandMessageEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LampCloseEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -36,6 +39,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GarlandLampApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LampCloseEvent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

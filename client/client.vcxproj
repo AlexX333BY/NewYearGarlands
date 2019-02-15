@@ -126,11 +126,13 @@
     <ClInclude Include="GarlandMessageEvent.h" />
     <ClInclude Include="GarlandLampApp.h" />
     <ClInclude Include="GarlandLampFrame.h" />
+    <ClInclude Include="LampCloseEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GarlandLampApp.cpp" />
     <ClCompile Include="GarlandMessageEvent.cpp" />
     <ClCompile Include="GarlandLampFrame.cpp" />
+    <ClCompile Include="LampCloseEvent.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
