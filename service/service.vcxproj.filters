@@ -44,5 +44,13 @@
     <ClInclude Include="MessageGeneratorProvider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ErrorMessage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ErrorMessage.mc">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

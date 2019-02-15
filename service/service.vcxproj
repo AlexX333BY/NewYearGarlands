@@ -122,6 +122,7 @@
     <ClCompile Include="MessageGeneratorProvider.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ErrorMessage.h" />
     <ClInclude Include="GarlandServer.h" />
     <ClInclude Include="GarlandService.h" />
     <ClInclude Include="GarlandServerThreadArgument.h" />
@@ -131,6 +132,9 @@
     <ProjectReference Include="..\common\common.vcxproj">
       <Project>{3b28742d-3da6-4ee3-8814-fd2001865abd}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ErrorMessage.mc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

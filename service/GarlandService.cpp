@@ -1,5 +1,7 @@
+#include <strsafe.h>
 #include "GarlandService.h"
 #include "GarlandServer.h"
+#include "ErrorMessage.h"
 
 namespace NewYearGarlands
 {
@@ -51,12 +53,42 @@ namespace NewYearGarlands
 		}
 	}
 
+	VOID SvcReportEvent(LPCSTR szFunction)
+	{
+		HANDLE hEventSource;
+		LPCTSTR lpszStrings[2];
+		TCHAR Buffer[80];
+
+		hEventSource = RegisterEventSource(NULL, lpcsServiceName);
+
+		if (NULL != hEventSource)
+		{
+			StringCchPrintf(Buffer, 80, TEXT("%s failed with %d"), szFunction, GetLastError());
+
+			lpszStrings[0] = lpcsServiceName;
+			lpszStrings[1] = Buffer;
+
+			ReportEvent(hEventSource,        // event log handle
+				EVENTLOG_ERROR_TYPE, // event type
+				0,                   // event category
+				SVC_ERROR,           // event identifier
+				NULL,                // no security identifier
+				2,                   // size of lpszStrings array
+				0,                   // no binary data
+				lpszStrings,         // array of strings
+				NULL);               // no binary data
+
+			DeregisterEventSource(hEventSource);
+		}
+	}
+
 	VOID WINAPI ServiceMain(DWORD dwArgc, LPTSTR *lpszArgv)
 	{
 		g_hServiceStatusHandle = RegisterServiceCtrlHandler(lpcsServiceName, ServiceCtrlHandler);
 
 		if (g_hServiceStatusHandle == 0)
 		{
+			SvcReportEvent("RegisterServiceCtrlHandler");
 			return;
 		}
 
@@ -68,6 +100,7 @@ namespace NewYearGarlands
 
 		if (g_hStopEvent == NULL)
 		{
+			SvcReportEvent("CreateEvent");
 			ReportServiceStatus(SERVICE_STOPPED, 0, 0, ERROR_SERVICE_SPECIFIC_ERROR, dwEventCreationError);
 			return;
 		}
@@ -77,6 +110,7 @@ namespace NewYearGarlands
 
 		if (!g_gsServer->Start())
 		{
+			SvcReportEvent("Start");
 			ReportServiceStatus(SERVICE_STOPPED, 0, 0, ERROR_SERVICE_SPECIFIC_ERROR, dwServerStartupError);
 			return;
 		}
@@ -91,6 +125,7 @@ namespace NewYearGarlands
 	{
 		int iServiceNameLength = lstrlen(lpcsServiceName);
 		TCHAR *szServiceName = (TCHAR *)calloc(iServiceNameLength + 1, sizeof(TCHAR));
+		strcpy_s(szServiceName, iServiceNameLength + 1, lpcsServiceName);
 
 		SERVICE_TABLE_ENTRY aServiceStartTable[] =
 		{
