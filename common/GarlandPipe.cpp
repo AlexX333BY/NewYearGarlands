@@ -2,7 +2,7 @@
 
 namespace NewYearGarlands
 {
-	const LPCSTR lpsPipeName = "\\.\\pipe\\LOCAL";
+	const LPCSTR lpsPipeName = "\\\\.\\pipe\\LOCAL";
 
 	LPCSTR GarlandPipe::GetPipeName()
 	{
