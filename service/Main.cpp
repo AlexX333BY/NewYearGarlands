@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 			}
 			else
 			{
-				printf("Error while installing service\n");
+				printf("Error while installing service: %d\n", GetLastError());
 			}
 		}
 		else
