@@ -7,7 +7,7 @@ int main()
 {
 	GarlandServer *server = new GarlandServer();
 	BOOL bStartupResult = server->Start();
-	printf("Is server started? %s", bStartupResult ? "TRUE" : "FALSE");
+	printf("Is server started? %s\n", bStartupResult ? "TRUE" : "FALSE");
 	system("pause");
 	if (bStartupResult) {
 		server->Shutdown();

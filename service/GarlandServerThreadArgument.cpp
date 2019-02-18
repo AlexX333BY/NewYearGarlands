@@ -13,7 +13,7 @@ namespace NewYearGarlands
 	{
 		DeleteCriticalSection(&m_csReadWriteCriticalSection);
 		CloseHandle(m_hNonZeroCountEvent);
-		for (std::vector<ServerGarlandPipe *>::const_iterator it = m_vClientPipes.cbegin(); it != m_vClientPipes.cend(); ++it)
+		for (std::list<ServerGarlandPipe *>::const_iterator it = m_lClientPipes.cbegin(); it != m_lClientPipes.cend(); ++it)
 		{
 			delete *it;
 		}

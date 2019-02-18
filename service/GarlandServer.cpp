@@ -81,13 +81,13 @@ namespace NewYearGarlands
 			WaitForSingleObject(m_hLightingThread, INFINITE);
 			CloseHandle(m_hLightingThread);
 
-			for (std::vector<ServerGarlandPipe *>::iterator it = m_gstaArgument.m_vClientPipes.begin();
-				it != m_gstaArgument.m_vClientPipes.end(); ++it)
+			for (std::list<ServerGarlandPipe *>::iterator it = m_gstaArgument.m_lClientPipes.begin();
+				it != m_gstaArgument.m_lClientPipes.end(); ++it)
 			{
 				(*it)->Disconnect();
 				delete *it;
 			}
-			m_gstaArgument.m_vClientPipes.clear();
+			m_gstaArgument.m_lClientPipes.clear();
 			m_bIsRunning = FALSE;
 
 			return TRUE;
@@ -112,8 +112,8 @@ namespace NewYearGarlands
 			if (sgpPipe->Connect())
 			{
 				EnterCriticalSection(&pgstaArgument->m_csReadWriteCriticalSection);
-				pgstaArgument->m_vClientPipes.push_back(sgpPipe);
-				if (pgstaArgument->m_vClientPipes.size() == 1)
+				pgstaArgument->m_lClientPipes.push_back(sgpPipe);
+				if (pgstaArgument->m_lClientPipes.size() == 1)
 				{
 					SetEvent(pgstaArgument->m_hNonZeroCountEvent);
 				}
@@ -139,8 +139,8 @@ namespace NewYearGarlands
 		while (pgstaArgument->m_bShouldRun)
 		{
 			gmMessage = mgpProvider.GetNext()();
-			for (std::vector<ServerGarlandPipe *>::iterator it = pgstaArgument->m_vClientPipes.begin(); 
-				it != pgstaArgument->m_vClientPipes.end(); ++it)
+			for (std::list<ServerGarlandPipe *>::iterator it = pgstaArgument->m_lClientPipes.begin(); 
+				it != pgstaArgument->m_lClientPipes.end(); ++it)
 			{
 				if (!(*it)->SendGarlandMessage(&gmMessage))
 				{
@@ -148,19 +148,19 @@ namespace NewYearGarlands
 				}
 			}
 
-			for (std::vector<ServerGarlandPipe *>::iterator it = pgstaArgument->m_vClientPipes.begin();
-				it != pgstaArgument->m_vClientPipes.end(); ++it)
-			{
-				if (!(*it)->IsConnected())
+			std::list<ServerGarlandPipe *>::iterator it = pgstaArgument->m_lClientPipes.begin(), cur;
+			while (it != pgstaArgument->m_lClientPipes.end()) {
+				cur = it++;
+				if (!(*cur)->IsConnected())
 				{
-					delete *it;
+					delete *cur;
 					EnterCriticalSection(&pgstaArgument->m_csReadWriteCriticalSection);
-					pgstaArgument->m_vClientPipes.erase(it);
+					pgstaArgument->m_lClientPipes.erase(cur);
 					LeaveCriticalSection(&pgstaArgument->m_csReadWriteCriticalSection);
 				}
 			}
 
-			if (pgstaArgument->m_vClientPipes.empty())
+			if (pgstaArgument->m_lClientPipes.empty())
 			{
 				WaitForSingleObject(pgstaArgument->m_hNonZeroCountEvent, INFINITE);
 				mgpProvider.Reset();
