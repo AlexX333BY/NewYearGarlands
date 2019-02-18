@@ -1,3 +1,20 @@
+#ifdef _DEBUG 
+#include "GarlandServer.h"
+
+using namespace NewYearGarlands;
+
+int main()
+{
+	GarlandServer *server = new GarlandServer();
+	BOOL bStartupResult = server->Start();
+	printf("Is server started? %s", bStartupResult ? "TRUE" : "FALSE");
+	system("pause");
+	if (bStartupResult) {
+		server->Shutdown();
+	}
+	return 0;
+}
+#else
 #include <stdio.h>
 #include <Windows.h>
 #include "GarlandService.h"
@@ -24,7 +41,7 @@ BOOL InstallService()
 
 	hService = CreateService(hSCManager, NewYearGarlands::lpcsServiceName, NewYearGarlands::lpcsServiceDescription, SERVICE_ALL_ACCESS,
 		SERVICE_WIN32_OWN_PROCESS, SERVICE_DEMAND_START, SERVICE_ERROR_NORMAL,
-		lptsPath, NULL, NULL, NULL, "NT AUTHORITY\\NetworkService", NULL);
+		lptsPath, NULL, NULL, NULL, ".\\LocalSystem", NULL);
 
 	if (hService == NULL)
 	{
@@ -70,3 +87,4 @@ int main(int argc, char **argv)
 
 	return 0;
 }
+#endif

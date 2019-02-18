@@ -41,8 +41,9 @@ namespace NewYearGarlands
 	{
 		if (IsConnected())
 		{
-			m_bIsConnected = !DisconnectNamedPipe(m_hPipe);
-			return m_bIsConnected;
+			DisconnectNamedPipe(m_hPipe);
+			m_bIsConnected = FALSE;
+			return TRUE;
 		}
 		else
 		{

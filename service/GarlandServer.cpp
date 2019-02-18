@@ -15,7 +15,9 @@ namespace NewYearGarlands
 
 	GarlandServer::GarlandServer() : m_bIsRunning(FALSE),
 		m_hClientListeningThread(INVALID_HANDLE_VALUE), m_hLightingThread(INVALID_HANDLE_VALUE)
-	{ }
+	{
+		m_gstaArgument.m_dwLightSleepTime = 1000;
+	}
 
 	GarlandServer::~GarlandServer()
 	{
@@ -143,6 +145,14 @@ namespace NewYearGarlands
 				if (!(*it)->SendGarlandMessage(&gmMessage))
 				{
 					(*it)->Disconnect();
+				}
+			}
+
+			for (std::vector<ServerGarlandPipe *>::iterator it = pgstaArgument->m_vClientPipes.begin();
+				it != pgstaArgument->m_vClientPipes.end(); ++it)
+			{
+				if (!(*it)->IsConnected())
+				{
 					delete *it;
 					EnterCriticalSection(&pgstaArgument->m_csReadWriteCriticalSection);
 					pgstaArgument->m_vClientPipes.erase(it);

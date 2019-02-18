@@ -29,23 +29,9 @@ namespace NewYearGarlands
 	{
 		if (!IsConnected())
 		{
-			BOOL bResult = WaitNamedPipe(GetPipeName(), dwTimeOut);
-			if (bResult)
+			if (WaitNamedPipe(GetPipeName(), dwTimeOut))
 			{
-				HANDLE hNewPipe = CreateFile(GetPipeName(), GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL);
-				if (hNewPipe != INVALID_HANDLE_VALUE)
-				{
-					DWORD dwPipeMode = PIPE_READMODE_MESSAGE | PIPE_WAIT;
-					bResult = SetNamedPipeHandleState(m_hPipe, &dwPipeMode, NULL, NULL);
-					if (bResult)
-					{
-						m_hPipe = hNewPipe;
-					}
-					else
-					{
-						CloseHandle(hNewPipe);
-					}
-				}
+				m_hPipe = CreateFile(GetPipeName(), GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL);
 			}
 			return IsConnected();
 		}
