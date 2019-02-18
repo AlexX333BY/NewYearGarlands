@@ -6,16 +6,16 @@ namespace NewYearGarlands
 	const wxString noServerMessage("No server is running now");
 	const wxString disconnectedMessage("Server disconnected");
 
-	VOID SendMessageEvent(GarlandLampFrame *glfFrame, GarlandMessage *gmMessage)
+	void SendMessageEvent(GarlandLampFrame *glfFrame, GarlandMessage *gmMessage)
 	{
 		GarlandMessageEvent gmeEvent(glfFrame->GetId(), 
 			gmMessage->mtMessageType == LIGHT_UP ? LIGHT_UP_EVENT : LIGHT_OUT_EVENT, 
-			gmMessage->crColor);
+			wxColour(gmMessage->crColor));
 		gmeEvent.SetEventObject(glfFrame);
 		glfFrame->ProcessWindowEvent(gmeEvent);
 	}
 
-	VOID SendCloseEvent(GarlandLampFrame *glfFrame, bool bEverConnected)
+	void SendCloseEvent(GarlandLampFrame *glfFrame, bool bEverConnected)
 	{
 		LampCloseEvent lceEvent(glfFrame->GetId(), LAMP_CLOSE_EVENT, bEverConnected);
 		lceEvent.SetEventObject(glfFrame);
@@ -38,7 +38,7 @@ namespace NewYearGarlands
 	}
 
 	GarlandLampFrame::GarlandLampFrame(const wxString& title, byte bPercentIndent) : 
-		wxFrame(NULL, -1, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE | wxFULL_REPAINT_ON_RESIZE),
+		wxFrame(nullptr, -1, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE | wxFULL_REPAINT_ON_RESIZE),
 		m_bPercentIndent(bPercentIndent), m_currentLampColour(GetBackgroundColour())
 	{
 		Bind(LAMP_CLOSE_EVENT, &GarlandLampFrame::OnClose, this);
@@ -64,15 +64,13 @@ namespace NewYearGarlands
 
 	void GarlandLampFrame::OnLightOut(GarlandMessageEvent& event)
 	{
-		wxColour colour(GetBackgroundColour());
-		m_currentLampColour = colour;
+		m_currentLampColour = wxColour(GetBackgroundColour());
 		Refresh();
 	}
 
 	void GarlandLampFrame::OnLightUp(GarlandMessageEvent& event)
 	{
-		wxColour colour(event.GetColor());
-		m_currentLampColour = colour;
+		m_currentLampColour = event.GetColor();
 		Refresh();
 	}
 

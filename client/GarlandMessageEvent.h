@@ -10,11 +10,11 @@ namespace NewYearGarlands
 	class GarlandMessageEvent : public wxEvent
 	{
 	public:
-		GarlandMessageEvent(int winId, wxEventType wxEventType, const COLORREF crColor);
-		COLORREF GetColor();
+		GarlandMessageEvent(int winId, wxEventType wxEventType, const wxColour cColor);
+		wxColour GetColor();
 		virtual wxEvent *Clone() const;
 	protected:
-		const COLORREF m_crColor;
+		const wxColour m_cColor;
 	};
 
 	wxDEFINE_EVENT(LIGHT_UP_EVENT, GarlandMessageEvent);

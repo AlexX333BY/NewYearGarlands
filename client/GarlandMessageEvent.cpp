@@ -2,8 +2,8 @@
 
 namespace NewYearGarlands
 {
-	GarlandMessageEvent::GarlandMessageEvent(int winId, wxEventType wxEventType, const COLORREF crColor)
-		: wxEvent(winId, wxEventType), m_crColor(crColor)
+	GarlandMessageEvent::GarlandMessageEvent(int winId, wxEventType wxEventType, const wxColour cColor)
+		: wxEvent(winId, wxEventType), m_cColor(cColor)
 	{ }
 
 	wxEvent *GarlandMessageEvent::Clone() const
@@ -11,9 +11,9 @@ namespace NewYearGarlands
 		return new GarlandMessageEvent(*this);
 	}
 
-	COLORREF GarlandMessageEvent::GetColor()
+	wxColour GarlandMessageEvent::GetColor()
 	{
-		return m_crColor;
+		return m_cColor;
 	}
 
 	wxDEFINE_EVENT(LIGHT_UP, GarlandMessageEvent);
