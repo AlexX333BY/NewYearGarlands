@@ -104,10 +104,17 @@ namespace NewYearGarlands
 		{
 			if (sgpPipe == NULL)
 			{
-				sgpPipe = new ServerGarlandPipe();
+				try
+				{
+					sgpPipe = new ServerGarlandPipe();
+				}
+				catch (std::exception *e)
+				{
+					delete e;
+				}
 			}
 
-			if (sgpPipe->Connect())
+			if ((sgpPipe != NULL) && sgpPipe->Connect())
 			{
 				EnterCriticalSection(&pgstaArgument->m_csReadWriteCriticalSection);
 				pgstaArgument->m_lClientPipes.push_back(sgpPipe);

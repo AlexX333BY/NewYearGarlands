@@ -1,5 +1,4 @@
 #include "ClientGarlandPipe.h"
-#include <exception>
 
 namespace NewYearGarlands
 {
