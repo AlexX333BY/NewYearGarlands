@@ -43,7 +43,7 @@ namespace NewYearGarlands
 
 	BOOL ClientGarlandPipe::DisconnectFromServer()
 	{
-		if (m_hPipe != INVALID_HANDLE_VALUE)
+		if (IsConnected())
 		{
 			CloseHandle(m_hPipe);
 			m_hPipe = INVALID_HANDLE_VALUE;
@@ -62,13 +62,10 @@ namespace NewYearGarlands
 			DWORD dwReadBytes;
 			BOOL bReadResult = ReadFile(m_hPipe, pgmMessage, sizeof(GarlandMessage), &dwReadBytes, NULL);
 
-			if (!bReadResult)
+			if (!bReadResult && (GetLastError() == ERROR_MORE_DATA))
 			{
-				if (GetLastError() == ERROR_MORE_DATA)
-				{
-					// Connected to illegal server, disconnecting
-					DisconnectFromServer();
-				}
+				// Connected to illegal server, disconnecting
+				DisconnectFromServer();
 			}
 			return bReadResult;
 		}

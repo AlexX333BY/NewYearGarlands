@@ -64,7 +64,7 @@ namespace NewYearGarlands
 
 	void GarlandLampFrame::OnLightOut(GarlandMessageEvent& event)
 	{
-		m_currentLampColour = wxColour(GetBackgroundColour());
+		m_currentLampColour = GetBackgroundColour();
 		Refresh();
 	}
 

@@ -15,9 +15,7 @@ namespace NewYearGarlands
 
 	GarlandServer::GarlandServer() : m_bIsRunning(FALSE),
 		m_hClientListeningThread(INVALID_HANDLE_VALUE), m_hLightingThread(INVALID_HANDLE_VALUE)
-	{
-		m_gstaArgument.m_dwLightSleepTime = 1000;
-	}
+	{ }
 
 	GarlandServer::~GarlandServer()
 	{
@@ -149,7 +147,8 @@ namespace NewYearGarlands
 			}
 
 			std::list<ServerGarlandPipe *>::iterator it = pgstaArgument->m_lClientPipes.begin(), cur;
-			while (it != pgstaArgument->m_lClientPipes.end()) {
+			while (it != pgstaArgument->m_lClientPipes.end())
+			{
 				cur = it++;
 				if (!(*cur)->IsConnected())
 				{
